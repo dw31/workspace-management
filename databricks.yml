@@ -16,20 +16,8 @@ resources:
   jobs:
     metadata_collection_job:
       name: "Unity Catalog Metadata Collection"
-      job_clusters:
-        - job_cluster_key: "metadata_cluster"
-          new_cluster:
-            spark_version: "13.3.x-scala2.12"
-            node_type_id: "i3.xlarge"
-            num_workers: 2
-            spark_conf:
-              "spark.databricks.delta.preview.enabled": "true"
-            custom_tags:
-              "project": "unity-catalog-metadata"
-              "owner": "data-team"
       tasks:
         - task_key: "collect_metadata"
-          job_cluster_key: "metadata_cluster"
           python_wheel_task:
             package_name: "unity_catalog_metadata"
             entry_point: "collect_metadata"
@@ -39,6 +27,8 @@ resources:
           libraries:
             - pypi:
                 package: "databricks-sql-connector>=2.9.0"
+          compute:
+            compute_type: "serverless"
       timeout_seconds: 7200
       max_concurrent_runs: 1
 
